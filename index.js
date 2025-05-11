@@ -127,7 +127,6 @@ class CurrencyConverter {
         "SRD": "Surinamese Dollar",
         "SZL": "Swazi Lilangeni",
         "SEK": "Swedish Krona",
-        "CF": "Swiss Franc",
         "CHF": "Swiss Franc",
         "TJS": "Tajikistani Somoni",
         "TZS": "Tanzanian Shilling",
@@ -272,7 +271,7 @@ class CurrencyConverter {
         });
       } else {
         return new Promise((resolve, reject) => {
-            request(`https://www.google.com/search?q=${this.currencyAmount}+${this.currencyFrom}+to+${this.currencyTo}+&hl=en`, function(error, response, body) {
+          request(`https://www.google.com/finance/quote/${this.currencyFrom}-${this.currencyTo}`, function(error, response, body) {
               if (error) {
                 return reject(error);
               } else {
@@ -283,19 +282,14 @@ class CurrencyConverter {
             return cheerio.load(body)
           })
           .then(($) => {
-            return $(".iBp4i").text().split(" ")[0]
-          })
-          .then((rates) => {
-            if (this.isDecimalComma) {
-              if (rates.includes("."))
-                rates = this.replaceAll(rates, ".", "")
-              if (rates.includes(","))
-                rates = this.replaceAll(rates, ",", ".")
-            } else {
-              if (rates.includes(","))
-                rates = this.replaceAll(rates, ",", "")
+            const rateString = $(".YMlKec.fxKbKc").first().text().replace(",", ".");
+            if (!rateString || isNaN(rateString)) {
+              throw new Error("Unable to extract conversion rate from Google Finance page.");
             }
-            rates = parseFloat(rates) / this.currencyAmount
+            return rateString;
+          })
+          .then((rateString) => {
+            let rates = parseFloat(rateString) / this.currencyAmount;
             if (this.isRatesCaching) {
               this.addRateToRatesCache(currencyPair, rates);
             }

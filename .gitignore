@@ -119,6 +119,9 @@ coverage.lcov
 .nyc_output
 .nyc_output/
 
+# IDEs
 .vscode
+.idea
+
 t.js
 s.js

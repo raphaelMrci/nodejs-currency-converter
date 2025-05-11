@@ -134,8 +134,8 @@ describe("currencyConverter", () =>  {
             return expect(currencyConverter.rates()).to.eventually.not.equal(undefined)
         })
 
-        it("should not return undefined values for CF", () => {
-            currencyConverter.from("CF").to("JPY")
+        it("should not return undefined values for CHF", () => {
+            currencyConverter.from("CHF").to("JPY")
             return expect(currencyConverter.rates()).to.eventually.not.equal(undefined)
         })
 
